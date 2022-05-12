@@ -66,6 +66,14 @@ void Response::print_success_status_to_serial() {
   this->parsed_response->print_success_status_to_serial();
 }
 
+bool Response::find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len) {
+  if (this->parsed_response == nullptr) {
+    return false;
+  }
+
+  return this->parsed_response->find_value(tags, tag_lens, tags_len, value, value_len);
+}
+
 ParsedResponse::ParsedResponse(uint8_t* response, size_t response_len) {
   this->tlv = nullptr;
   if (response_len > 2) {
@@ -102,4 +110,12 @@ void ParsedResponse::print_hex_to_serial() {
   }
   
   Serial.println(this->response_code, HEX);
+}
+
+bool ParsedResponse::find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len) {
+  if (this->tlv == nullptr) {
+    return false;
+  }
+  
+  return this->tlv->find_value(tags, tag_lens, tags_len, value, value_len);
 }

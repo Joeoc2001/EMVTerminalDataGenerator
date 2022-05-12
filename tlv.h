@@ -30,6 +30,9 @@ public:
 
   // Calls private recursive method
   void print_hex_to_serial();
+
+  bool tag_matches(uint8_t* tag, uint8_t tag_len);
+  bool find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len);
 };
 
 #endif

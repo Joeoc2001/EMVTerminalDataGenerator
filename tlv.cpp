@@ -103,3 +103,50 @@ void TLV::print_hex_to_serial(uint8_t indents) {
 void TLV::print_hex_to_serial() {
   this->print_hex_to_serial(0);
 }
+
+bool TLV::tag_matches(uint8_t* tag, uint8_t tag_len) {
+  if (tag_len != this->tag_len) {
+    return false;
+  }
+
+  for (uint8_t i = 0; i < tag_len; i++) {
+    if (this->tag[i] != tag[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool TLV::find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len) {
+  if (tags_len == 0) {
+    return false;
+  }
+
+  uint8_t tag_len = tag_lens[0];
+  uint8_t* tag = tags[0];
+  if (this->tag_matches(tag, tag_len)) {
+    if (tags_len == 1) { // We want this value
+      if (*value_len < this->data_len) {
+        return false;
+      }
+      memcpy(value, this->data, this->data_len);
+      *value_len = this->data_len;
+      return true;
+    }
+
+    // Else we want a child value
+    if (this->first_child == nullptr) {
+      return false;
+    }
+    uint8_t** child_tags = &(tags[1]);
+    uint8_t* child_tag_lens = &(tag_lens[1]);
+    return this->first_child->find_value(child_tags, child_tag_lens, tags_len - 1, value, value_len);
+  }
+
+  // Else it's in a sibling
+  if (this->next_sibling == nullptr) {
+    return false;
+  }
+  return this->next_sibling->find_value(tags, tag_lens, tags_len, value, value_len);
+}

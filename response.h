@@ -23,6 +23,8 @@ public:
   bool is_success();
   void print_success_status_to_serial();
   void print_hex_to_serial();
+
+  bool find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len);
 };
 
 /*
@@ -46,6 +48,8 @@ public:
   
   void print_success_status_to_serial();
   void print_hex_to_serial();
+  
+  bool find_value(uint8_t** tags, uint8_t* tag_lens, size_t tags_len, uint8_t* value, size_t* value_len);
 };
 
 #endif
